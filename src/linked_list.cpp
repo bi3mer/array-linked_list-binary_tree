@@ -1,5 +1,5 @@
 #include "linked_list.hpp"
-#include <stdexcept>
+#include <cassert>
 
 LinkedList::LinkedList() : head(nullptr) {}
 
@@ -29,16 +29,10 @@ void LinkedList::insert(std::size_t index, int value)
     LLNode* curr = head;
     for (std::size_t i = 0; i < index - 1; ++i)
     {
-        if (curr == nullptr)
-        {
-            throw std::out_of_range("index out of range");
-        }
+        assert(curr != nullptr);
         curr = curr->next;
     }
-    if (curr == nullptr)
-    {
-        throw std::out_of_range("index out of range");
-    }
+    assert(curr != nullptr);
     curr->next = new LLNode{value, curr->next};
 }
 
@@ -83,10 +77,7 @@ void LinkedList::insert_sorted(int value)
 
 void LinkedList::remove_front()
 {
-    if (head == nullptr)
-    {
-        throw std::underflow_error("list is empty");
-    }
+    assert(head != nullptr);
     LLNode* tmp = head;
     head = head->next;
     delete tmp;
@@ -94,10 +85,7 @@ void LinkedList::remove_front()
 
 void LinkedList::remove_back()
 {
-    if (head == nullptr)
-    {
-        throw std::underflow_error("list is empty");
-    }
+    assert(head != nullptr);
     if (head->next == nullptr)
     {
         delete head;
@@ -115,10 +103,7 @@ void LinkedList::remove_back()
 
 void LinkedList::remove_index(std::size_t index)
 {
-    if (head == nullptr)
-    {
-        throw std::out_of_range("index out of range");
-    }
+    assert(head != nullptr);
     if (index == 0)
     {
         remove_front();
@@ -127,16 +112,10 @@ void LinkedList::remove_index(std::size_t index)
     LLNode* curr = head;
     for (std::size_t i = 0; i < index - 1; ++i)
     {
-        if (curr->next == nullptr)
-        {
-            throw std::out_of_range("index out of range");
-        }
+        assert(curr->next != nullptr);
         curr = curr->next;
     }
-    if (curr->next == nullptr)
-    {
-        throw std::out_of_range("index out of range");
-    }
+    assert(curr->next != nullptr);
     LLNode* tmp = curr->next;
     curr->next = tmp->next;
     delete tmp;

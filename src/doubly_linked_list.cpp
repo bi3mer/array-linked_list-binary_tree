@@ -1,5 +1,5 @@
 #include "doubly_linked_list.hpp"
-#include <stdexcept>
+#include <cassert>
 
 DoublyLinkedList::DoublyLinkedList() : head(nullptr) {}
 
@@ -76,16 +76,10 @@ void DoublyLinkedList::insert(std::size_t index, int value)
     LLDNode* curr = head;
     for (std::size_t i = 0; i < index - 1; ++i)
     {
-        if (curr == nullptr)
-        {
-            throw std::out_of_range("index out of range");
-        }
+        assert(curr != nullptr);
         curr = curr->next;
     }
-    if (curr == nullptr)
-    {
-        throw std::out_of_range("index out of range");
-    }
+    assert(curr != nullptr);
     LLDNode* node = new LLDNode{value, curr->next, curr};
     if (curr->next != nullptr)
     {
@@ -96,10 +90,7 @@ void DoublyLinkedList::insert(std::size_t index, int value)
 
 void DoublyLinkedList::remove_front()
 {
-    if (head == nullptr)
-    {
-        throw std::underflow_error("list is empty");
-    }
+    assert(head != nullptr);
     LLDNode* tmp = head;
     head = head->next;
     if (head != nullptr)
@@ -111,10 +102,7 @@ void DoublyLinkedList::remove_front()
 
 void DoublyLinkedList::remove_back()
 {
-    if (head == nullptr)
-    {
-        throw std::underflow_error("list is empty");
-    }
+    assert(head != nullptr);
     LLDNode* curr = head;
     while (curr->next != nullptr)
     {
@@ -133,10 +121,7 @@ void DoublyLinkedList::remove_back()
 
 void DoublyLinkedList::remove_index(std::size_t index)
 {
-    if (head == nullptr)
-    {
-        throw std::out_of_range("index out of range");
-    }
+    assert(head != nullptr);
     if (index == 0)
     {
         remove_front();
@@ -145,16 +130,10 @@ void DoublyLinkedList::remove_index(std::size_t index)
     LLDNode* curr = head;
     for (std::size_t i = 0; i < index; ++i)
     {
-        if (curr == nullptr)
-        {
-            throw std::out_of_range("index out of range");
-        }
+        assert(curr != nullptr);
         curr = curr->next;
     }
-    if (curr == nullptr)
-    {
-        throw std::out_of_range("index out of range");
-    }
+    assert(curr != nullptr);
     curr->prev->next = curr->next;
     if (curr->next != nullptr)
     {

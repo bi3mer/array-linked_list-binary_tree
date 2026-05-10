@@ -1,13 +1,10 @@
 #include "array.hpp"
-#include <stdexcept>
+#include <cassert>
 
 Array::Array(int capacity)
     : data(nullptr), size(0), capacity(capacity)
 {
-    if (capacity <= 0)
-    {
-        throw std::invalid_argument("capacity must be greater than 0");
-    }
+    assert(capacity > 0);
     data = new int[capacity];
 }
 
@@ -39,14 +36,8 @@ void Array::insert(int value)
 
 void Array::insert(std::size_t index, int value)
 {
-    if (static_cast<int>(index) > size)
-    {
-        throw std::out_of_range("index out of range");
-    }
-    if (size == capacity)
-    {
-        throw std::length_error("array is full");
-    }
+    assert(static_cast<int>(index) <= size);
+    assert(size < capacity);
     shift_right(static_cast<int>(index));
     data[index] = value;
     ++size;
@@ -54,10 +45,7 @@ void Array::insert(std::size_t index, int value)
 
 void Array::insert_front(int value)
 {
-    if (size == capacity)
-    {
-        throw std::length_error("array is full");
-    }
+    assert(size < capacity);
     shift_right(0);
     data[0] = value;
     ++size;
@@ -65,19 +53,14 @@ void Array::insert_front(int value)
 
 void Array::insert_back(int value)
 {
-    if (size == capacity)
-    {
-        throw std::length_error("array is full");
-    }
-    data[size++] = value;
+    assert(size < capacity);
+    data[size] = value;
+    ++size;
 }
 
 void Array::insert_sorted(int value)
 {
-    if (size == capacity)
-    {
-        throw std::length_error("array is full");
-    }
+    assert(size < capacity);
     int index = 0;
     while (index < size && data[index] < value)
     {
@@ -90,29 +73,20 @@ void Array::insert_sorted(int value)
 
 void Array::remove_front()
 {
-    if (size == 0)
-    {
-        throw std::underflow_error("array is empty");
-    }
+    assert(size > 0);
     shift_left(0);
     --size;
 }
 
 void Array::remove_back()
 {
-    if (size == 0)
-    {
-        throw std::underflow_error("array is empty");
-    }
+    assert(size > 0);
     --size;
 }
 
 void Array::remove_index(std::size_t index)
 {
-    if (static_cast<int>(index) >= size)
-    {
-        throw std::out_of_range("index out of range");
-    }
+    assert(static_cast<int>(index) < size);
     shift_left(static_cast<int>(index));
     --size;
 }

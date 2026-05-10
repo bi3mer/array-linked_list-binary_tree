@@ -1,13 +1,10 @@
 #include "sorted_array.hpp"
-#include <stdexcept>
+#include <cassert>
 
 SortedArray::SortedArray(int capacity)
     : data(nullptr), size(0), capacity(capacity)
 {
-    if (capacity <= 0)
-    {
-        throw std::invalid_argument("capacity must be greater than 0");
-    }
+    assert(capacity > 0);
     data = new int[capacity];
 }
 
@@ -34,10 +31,7 @@ void SortedArray::shift_left(int index)
 
 void SortedArray::insert(int value)
 {
-    if (size == capacity)
-    {
-        throw std::length_error("array is full");
-    }
+    assert(size < capacity);
     int lo = 0;
     int hi = size;
     while (lo < hi)

@@ -1,5 +1,5 @@
 #include "linked_list_tail.hpp"
-#include <stdexcept>
+#include <cassert>
 
 LinkedListTail::LinkedListTail() : head(nullptr), tail(nullptr) {}
 
@@ -29,16 +29,10 @@ void LinkedListTail::insert(std::size_t index, int value)
     LLTNode* curr = head;
     for (std::size_t i = 0; i < index - 1; ++i)
     {
-        if (curr == nullptr)
-        {
-            throw std::out_of_range("index out of range");
-        }
+        assert(curr != nullptr);
         curr = curr->next;
     }
-    if (curr == nullptr)
-    {
-        throw std::out_of_range("index out of range");
-    }
+    assert(curr != nullptr);
     LLTNode* node = new LLTNode{value, curr->next};
     curr->next = node;
     if (node->next == nullptr)
@@ -93,10 +87,7 @@ void LinkedListTail::insert_sorted(int value)
 
 void LinkedListTail::remove_front()
 {
-    if (head == nullptr)
-    {
-        throw std::underflow_error("list is empty");
-    }
+    assert(head != nullptr);
     LLTNode* tmp = head;
     head = head->next;
     if (head == nullptr)
@@ -108,10 +99,7 @@ void LinkedListTail::remove_front()
 
 void LinkedListTail::remove_back()
 {
-    if (head == nullptr)
-    {
-        throw std::underflow_error("list is empty");
-    }
+    assert(head != nullptr);
     if (head == tail)
     {
         delete head;
@@ -131,10 +119,7 @@ void LinkedListTail::remove_back()
 
 void LinkedListTail::remove_index(std::size_t index)
 {
-    if (head == nullptr)
-    {
-        throw std::out_of_range("index out of range");
-    }
+    assert(head != nullptr);
     if (index == 0)
     {
         remove_front();
@@ -143,16 +128,10 @@ void LinkedListTail::remove_index(std::size_t index)
     LLTNode* curr = head;
     for (std::size_t i = 0; i < index - 1; ++i)
     {
-        if (curr->next == nullptr)
-        {
-            throw std::out_of_range("index out of range");
-        }
+        assert(curr->next != nullptr);
         curr = curr->next;
     }
-    if (curr->next == nullptr)
-    {
-        throw std::out_of_range("index out of range");
-    }
+    assert(curr->next != nullptr);
     LLTNode* tmp = curr->next;
     curr->next = tmp->next;
     if (tmp == tail)
