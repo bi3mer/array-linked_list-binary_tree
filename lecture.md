@@ -15,6 +15,25 @@ std::array<int, 5> a{};
   0   1   2   3   4
 ```
 
+### Array with `size` and `capacity`
+
+Before diving into operations, it helps to understand how arrays track their contents:
+
+- `capacity` — max number of elements the array can hold
+- `size` — number of elements currently stored
+
+```
+capacity = 5, size = 3
+
+┌────┬────┬────┬────┬────┐
+│ 10 │ 20 │ 30 │    │    │
+└────┴────┴────┴────┴────┘
+   0    1    2    3    4
+             ^size
+```
+
+Operations like `insert_back` and `remove_back` use `size` to know where the live data ends — no shifting required.
+
 ### Accessing and Setting Elements
 
 ```cpp
@@ -63,6 +82,12 @@ for (size_t i = 0; i < n; ++i) {
 
 > **Q:** What is the best case for `find`? Does Big-O capture that?
 
+Big-O describes the **worst case** — it is an upper bound. Two related notations fill in the rest of the picture:
+- **Ω (Omega)** — lower bound (best case). `find` is Ω(1): the value might be at index 0.
+- **Θ (Theta)** — tight bound (best and worst match). Bubble sort is Θ(n²) regardless of input.
+
+When people say "O(n)" informally, they often mean Θ(n). This document follows that convention.
+
 
 ## Motivation: Arrays Are Fixed Size
 
@@ -70,7 +95,7 @@ Arrays require a capacity set at creation time. Too small and you run out of spa
 
 What if you don't?
 
-That means we need a datastructure that can grow or shrink as needed. One solution is a dynamic array ([`std::vector`](https://en.cppreference.com/cpp/container/vector) in c++), but instead, let's look at a datastructure that allocates and removes elements as needed.
+That means we need a data structure that can grow or shrink as needed. One solution is a dynamic array ([`std::vector`](https://en.cppreference.com/cpp/container/vector) in C++), but instead, let's look at a data structure that allocates and removes elements as needed.
 
 ## Linked Lists
 
@@ -176,6 +201,8 @@ head                    tail
 
 > **Q:** Does a tail pointer make `remove_back` O(1)? Why or why not?
 
+It does not. `tail` lets us *reach* the last node immediately, but after deleting it we need to update `tail` to point to the new last node — and finding that requires walking the whole list. There is no way to get to the second-to-last node in O(1) with only a `next` pointer. This limitation motivates the doubly linked list below.
+
 ### Doubly Linked List
 
 Each node has both `next` and `prev` pointers.
@@ -184,18 +211,22 @@ Each node has both `next` and `prev` pointers.
 nullptr <- [10] <-> [20] <-> [30] -> nullptr
 ```
 
+With both a `tail` pointer and `prev` pointers, `remove_back` becomes O(1): jump to `tail`, follow `prev` to the second-to-last node, update it, and delete the old tail.
+
 > **Q:** What operations become easier with a `prev` pointer? What gets harder?
 
 > **Q:** If a doubly linked list has more information, why is `find` not faster?
 
 ### Complexity Summary — Linked Lists
 
+The Doubly LL column assumes both a `tail` pointer and `prev` pointers.
+
 | Operation      | Array | Linked List | LL + Tail | Doubly LL |
 |----------------|-------|-------------|-----------|-----------|
 | `insert_front` | O(n)  | O(1)        | O(1)      | O(1)      |
-| `insert_back`  | O(1)  | O(n)        | O(1)      | O(n)      |
+| `insert_back`  | O(1)  | O(n)        | O(1)      | O(1)      |
 | `remove_front` | O(n)  | O(1)        | O(1)      | O(1)      |
-| `remove_back`  | O(1)  | O(n)        | O(n)      | O(n)      |
+| `remove_back`  | O(1)  | O(n)        | O(n)      | O(1)      |
 | `find`         | O(n)  | O(n)        | O(n)      | O(n)      |
 
 > **Q:** We've improved some operations with linked lists. What did we give up?
@@ -308,15 +339,18 @@ Three cases:
 The **in-order successor** of a node is the next value in sorted order — the smallest value still larger than the node. Found by going right once, then left as far as possible. It has at most one child (no left child by definition), so deleting it reduces to case 1 or 2.
 
 ```
-remove 30 (two children):
+remove 30 (two children — in-order successor is 35):
 
-        50              50
-       /  \            /  \
-     30    70   ->   35    70
-    /  \            /  \
-  20  40           20  40
+        50                   50
+       /  \                 /  \
+     30    70      ->     35    70
+    /  \  /  \           /  \  /  \
+  20  40 60  80        20  40 60  80
       /
      35
+
+35 is copied up to replace 30, then the original 35 node is deleted.
+40's left child is now nullptr.
 ```
 
 ```cpp
@@ -389,23 +423,6 @@ Binary search finds the position in O(log n). Shifting to make room costs O(n). 
 | `insert`  | O(n)         | O(log n) |
 | `find`    | O(log n)     | O(log n) |
 | `remove`  | O(n)         | O(log n) |
-
-### Array with `size` and `capacity`
-
-Now that we understand insert and remove, we can apply these operations back to arrays by tracking:
-
-- `capacity` — max number of elements the array can hold
-- `size` — number of elements currently stored
-
-```
-capacity = 5, size = 3
-
-┌────┬────┬────┬────┬────┐
-│ 10 │ 20 │ 30 │    │    │
-└────┴────┴────┴────┴────┘
-   0    1    2    3    4
-             ^size
-```
 
 
 ## Overall Comparison
